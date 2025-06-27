@@ -1,0 +1,211 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schengen Visa Application FAQ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .faq {
+            background: #fff;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .faq h2 {
+            cursor: pointer;
+            color: #0066cc;
+        }
+        .faq p, .faq ul {
+            display: none;
+            margin-top: 10px;
+        }
+        .faq.active p, .faq.active ul {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Schengen Visa Application FAQ</h1>
+        <p>Welcome to our FAQ page for navigating the Schengen visa application process through VFS Global. Below are answers to common questions and solutions to frequent errors encountered on the VFS Global website, including tips to address them effectively.</p>
+
+        <div class="faq">
+            <h2>How do I book a Schengen visa appointment on the VFS Global website?</h2>
+            <p>
+                To book an appointment:
+                <ol>
+                    <li>Visit the VFS Global website and select your destination country.</li>
+                    <li>Create an account or log in with your email address.</li>
+                    <li>Choose the appropriate visa type and select a visa application center.</li>
+                    <li>Select an available date and time slot.</li>
+                    <li>Complete the online application form and upload required documents.</li>
+                    <li>Confirm your appointment and keep the confirmation email.</li>
+                </ol>
+                <strong>Tip:</strong> Slots are limited, especially during peak seasons. Check frequently (every 15–20 minutes) for cancellations, or use a service like VisaBot to get instant notifications when slots open.
+            </p>
+        </div>
+
+        <div class="faq" id="login-error">
+            <h2>What should I do if I encounter the "Sorry, you have either exceeded the maximum number of attempts" error?</h2>
+            <p>
+                This error occurs when you’ve exceeded login attempts or triggered security restrictions. To resolve:
+                <ul>
+                    <li>Clear your browser’s cache and cookies to reset the session.</li>
+                    <li>Wait at least 2 hours before trying again to avoid further blocks.</li>
+                    <li>Switch to a different browser (e.g., from Chrome to Edge) or device.</li>
+                    <li>Complete the booking in one session without closing the browser abruptly.</li>
+                    <li>Use a VPN set to a European country or restart your modem to change your IP address.</li>
+                </ul>
+                <strong>Tip:</strong> Avoid multiple login attempts in quick succession to prevent triggering VFS Global’s security measures.
+            </p>
+        </div>
+
+        <div class="faq" id="payment-error">
+            <h2>Why am I getting a payment error when trying to book an appointment?</h2>
+            <p>
+                Payment errors often occur due to high demand or technical glitches. To address:
+                <ul>
+                    <li>Ensure a stable internet connection to avoid interruptions during payment.</li>
+                    <li>Refresh the page and quickly select a new slot, as slots can be taken by others.</li>
+                    <li>Use a tool like VisaBot to monitor slot availability and auto-book when possible.</li>
+                    <li>Verify payment details and ensure you’re using a supported payment method.</li>
+                </ul>
+                <strong>Tip:</strong> Have payment information ready to complete the transaction quickly when a slot becomes available.
+            </p>
+        </div>
+
+        <div class="faq" id="mobile-error">
+            <h2>What should I do if I get a "Mobile Number already registered with VFS" error?</h2>
+            <p>
+                This error indicates the mobile number is already linked to an account. To resolve:
+                <ul>
+                    <li>Log in with the email tied to the registered mobile number.</li>
+                    <li>Create a new account with a different mobile number and email if you can’t access the original account.</li>
+                    <li>Contact VFS Global’s helpline, found in the “Contact Us” section, for further assistance.</li>
+                </ul>
+                <strong>Tip:</strong> Using a new mobile number for registration won’t impact your visa application as long as booking details are accurate.
+            </p>
+        </div>
+
+        <div class="faq">
+            <h2>How can I increase my chances of securing an appointment slot?</h2>
+            <p>
+                Securing a slot can be challenging due to high demand. To improve your chances:
+                <ul>
+                    <li>Check the VFS Global website frequently, ideally every 15–20 minutes, for cancellations.</li>
+                    <li>Use a service like VisaBot for real-time notifications or auto-booking of available slots.</li>
+                    <li>Consider applying through a less busy visa application center or an alternative Schengen country if your travel plans allow.</li>
+                    <li>Book as early as possible, up to six months in advance.</li>
+                </ul>
+                <strong>Tip:</strong> Check the website early in the morning or late at night, as new slots may be released then.
+            </p>
+        </div>
+
+        <div class="faq">
+            <h2>What documents are required for a Schengen visa application?</h2>
+            <p>
+                Required documents typically include:
+                <ul>
+                    <li>Valid passport.</li>
+                    <li>Completed visa application form.</li>
+                    <li>Proof of residence (e.g., UK BRP for non-EU residents).</li>
+                    <li>Travel insurance meeting Schengen requirements.</li>
+                    <li>Proof of travel (e.g., flight tickets, hotel bookings).</li>
+                    <li>Financial documents (e.g., bank statements).</li>
+                    <li>Proof of purpose (e.g., invitation letter, business documents).</li>
+                </ul>
+                <strong>Tip:</strong> Double-check all documents for accuracy and completeness to avoid delays or rejections.
+            </p>
+        </div>
+
+        <div class="faq" id="technical-error">
+            <h2>What should I do if I encounter other technical issues on the VFS Global website?</h2>
+            <p>
+                For general technical issues:
+                <ul>
+                    <li>Ensure a stable internet connection and avoid using a VPN unless resolving a specific issue.</li>
+                    <li>Try accessing the site with a different browser or device.</li>
+                    <li>Restart your modem to obtain a new IP address.</li>
+                    <li>Contact VFS Global’s helpline via the “Contact Us” section for country-specific support.</li>
+                    <li>Use a reputable third-party service like VisaBot to assist with booking if issues persist.</li>
+                </ul>
+                <strong>Tip:</strong> Clearing your browser cache or switching networks can resolve many technical glitches.
+            </p>
+        </div>
+
+        <div class="faq">
+            <h2>Are there premium services that can help with booking?</h2>
+            <p>
+                VFS Global offers premium services, such as priority appointment scheduling or document verification, for an additional fee per person.
+                <strong>Tip:</strong> Consider premium services for urgent travel, but review the costs on the VFS Global website before opting in.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const faqs = document.querySelectorAll('.faq h2');
+        faqs.forEach(faq => {
+            faq.addEventListener('click', () => {
+                const parent = faq.parentElement;
+                parent.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
